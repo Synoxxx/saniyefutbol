@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Google Search Console doğrulama etiketini buraya yapıştır -->
+<title>Saniye Futbol</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Saniye Futbol: futbolun en viral anları, saniyesi saniyesine. Resmi web sitesi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Figtree:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: stadyum tabelası gibi büyük başlık + maç saati; altında saha çizgisi bölücülerle ayrılmış tek sütun bölümler */
+:root{
+  --bg:#f3f5f0; --surface:#ffffff; --fg:#14201a; --muted:#56655c; --line:#d5ddd3;
+  --pitch:#17703a; --card:#f2b705; --on-pitch:#ffffff;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1410; --surface:#131e18; --fg:#eef3ec; --muted:#9aab9f; --line:#24342b;
+  --pitch:#2f9a56; --card:#ffc919; --on-pitch:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1410; --surface:#131e18; --fg:#eef3ec; --muted:#9aab9f; --line:#24342b;
+  --pitch:#2f9a56; --card:#ffc919; --on-pitch:#ffffff; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.95;margin:0;text-wrap:balance;letter-spacing:.01em}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+:focus-visible{outline:3px solid var(--card);outline-offset:3px}
+
+/* Üst menü */
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:900;font-size:22px;text-transform:uppercase;text-decoration:none}
+.brand svg{width:30px;height:30px}
+nav ul{display:flex;gap:20px;list-style:none;margin:0;padding:0;font-weight:500;font-size:15px}
+nav ul a{text-decoration:none;color:var(--muted)}
+nav ul a:hover{color:var(--fg)}
+
+/* Hero: saha */
+.hero{background:var(--pitch);color:var(--on-pitch);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 80px,rgba(255,255,255,.05) 80px 160px);pointer-events:none}
+.hero .wrap{position:relative;padding-block:56px 48px;display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:end}
+.hero h1{font-size:clamp(64px,13vw,150px);font-weight:900}
+.hero h1 span{display:block;color:var(--card)}
+.hero p{font-size:20px;max-width:30ch;margin:20px 0 28px;opacity:.92}
+.pitch-lines{position:absolute;right:-120px;top:50%;width:420px;height:420px;transform:translateY(-50%);opacity:.18;pointer-events:none}
+.clock{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:18px 20px;font-family:var(--mono);justify-self:end;width:100%;max-width:300px}
+.clock .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.clock .min{font-size:44px;font-weight:700;color:var(--card);font-variant-numeric:tabular-nums}
+.clock .live{font-size:12px;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
+.clock .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#ff4d4d;animation:blink 1.2s infinite}
+.clock .sub{font-size:13px;opacity:.85;margin-top:6px}
+@keyframes blink{50%{opacity:.2}}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;padding:13px 20px;border-radius:4px;font-size:16px;border:2px solid transparent}
+.btn-yt{background:var(--card);color:#14201a}
+.btn-yt:hover{filter:brightness(1.07)}
+.btn-ghost{border-color:rgba(255,255,255,.55);color:var(--on-pitch)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+
+/* Skor tabelası */
+.scoreboard{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.scoreboard div{padding-block:22px;display:flex;flex-direction:column;gap:2px}
+.scoreboard div+div{border-left:1px solid var(--line);padding-left:20px}
+.scoreboard b{font-family:var(--display);font-size:44px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+
+section{padding-block:64px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+h2{font-size:clamp(40px,7vw,64px);font-weight:900}
+
+/* Hakkımda */
+.about{display:grid;grid-template-columns:1fr 1.3fr;gap:40px;align-items:start}
+.about p{margin:0 0 16px;max-width:62ch}
+.about .lead{font-size:21px;font-weight:500}
+.facts{list-style:none;padding:0;margin:20px 0 0;border-top:1px solid var(--line)}
+.facts li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.facts li span:first-child{color:var(--muted)}
+
+/* Kategoriler */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cat .t{font-family:var(--mono);font-size:13px;color:var(--pitch);font-weight:700}
+.cat h3{font-size:28px;font-weight:700}
+.cat p{margin:0;color:var(--muted);font-size:15px}
+
+/* Blog */
+.posts{display:grid;gap:0;border-top:1px solid var(--line)}
+.post{display:grid;grid-template-columns:140px 1fr auto;gap:24px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.post:hover h3{color:var(--pitch)}
+.post time{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.post h3{font-size:30px;font-weight:700;transition:color .15s}
+.post p{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:60ch}
+.post .tag{font-family:var(--mono);font-size:12px;border:1px solid var(--line);padding:3px 8px;border-radius:3px;white-space:nowrap}
+.post>div{min-width:0}
+
+/* İletişim */
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:36px;display:grid;grid-template-columns:1.2fr 1fr;gap:32px}
+.contact p{color:var(--muted);margin:14px 0 0;max-width:46ch}
+.mail{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.mail code{font-family:var(--mono);font-size:16px;background:var(--bg);border:1px solid var(--line);padding:10px 14px;border-radius:4px;user-select:all;word-break:break-all}
+.copy{font:inherit;font-weight:700;font-size:14px;padding:10px 14px;border-radius:4px;border:0;background:var(--pitch);color:var(--on-pitch);cursor:pointer}
+.socials{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.socials a{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;font-weight:500}
+.socials a span{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.socials a:hover{color:var(--pitch)}
+
+footer{border-top:1px solid var(--line);padding-block:28px;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.official{display:inline-flex;align-items:center;gap:8px;color:var(--fg);font-weight:500}
+.official svg{width:18px;height:18px;color:var(--pitch)}
+
+@media (max-width:820px){
+  .hero .wrap,.about,.contact{grid-template-columns:1fr}
+  .clock{justify-self:start}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .post{grid-template-columns:1fr;gap:6px}
+  .post .tag{justify-self:start}
+  .pitch-lines{display:none}
+}
+@media (max-width:480px){
+  .cats{grid-template-columns:1fr}
+  .scoreboard b{font-size:32px}
+  .scoreboard div+div{padding-left:12px}
+  nav ul{gap:14px}
+  .contact{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <nav aria-label="Ana menü">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 16V7M16 16l6 4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      Saniye Futbol
+    </a>
+    <ul>
+      <li><a href="#hakkimda">Hakkımda</a></li>
+      <li><a href="#icerik">İçerik</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#iletisim">İletişim</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <svg class="pitch-lines" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="2"><circle cx="100" cy="100" r="60"/><circle cx="100" cy="100" r="3" fill="#fff"/><line x1="100" y1="0" x2="100" y2="200"/></g></svg>
+    <div class="wrap">
+      <div>
+        <div class="label" style="color:rgba(255,255,255,.75)">Resmi web sitesi · YouTube</div>
+        <h1>Saniye<span>Futbol</span></h1>
+        <p>Futbolun en viral anları, saniyesi saniyesine. Goller, kurtarışlar ve kimsenin beklemediği o an.</p>
+        <div class="btns">
+          <a class="btn btn-yt" href="https://www.youtube.com/@SaniyeFutbol" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .6 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-4.8 31 31 0 0 0-.4-4.8ZM9.7 15.1V8.9l5.8 3.1-5.8 3.1Z"/></svg>
+            Kanala abone ol
+          </a>
+          <a class="btn btn-ghost" href="#iletisim">İş birliği</a>
+        </div>
+      </div>
+      <div class="clock" aria-label="Maç saati">
+        <div class="row"><span class="min" id="min">90+3'</span><span class="live">CANLI</span></div>
+        <div class="sub">En iyi anlar genelde son saniyede gelir.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="scoreboard">
+      <div><span class="label">Abone</span><b>108K</b></div>
+      <div><span class="label">Format</span><b>Kısa</b></div>
+      <div><span class="label">Odak</span><b>Viral</b></div>
+    </div>
+  </div>
+
+  <section id="hakkimda">
+    <div class="wrap about">
+      <div>
+        <div class="label">Soyunma odası</div>
+        <h2>Hakkımda</h2>
+        <ul class="facts">
+          <li><span>Kanal</span><span>Saniye Futbol</span></li>
+          <li><span>Platform</span><span>YouTube</span></li>
+          <li><span>İçerik</span><span>Viral futbol videoları</span></li>
+          <li><span>Topluluk</span><span>108.000+ abone</span></li>
+        </ul>
+      </div>
+      <div>
+        <p class="lead">Saniye Futbol, futbolun bir saniyede değişen anlarını topladığım YouTube kanalı.</p>
+        <p>Bir gol, son dakika kurtarışı ya da tribünden yükselen bir tezahürat. Futbolun en çok konuşulan anlarını kısa, hızlı ve izlemesi keyifli videolarla bir araya getiriyorum.</p>
+        <p>Kanal bugün 108 binden fazla aboneden oluşan bir futbol topluluğuna ulaştı. Bu site, kanalın resmi adresi ve benimle iletişime geçmenin en doğru yolu.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="icerik" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Taktik tahtası</div><h2>Kanalda neler var</h2></div>
+      </div>
+      <div class="cats">
+        <div class="cat"><span class="t">⚽ GOL</span><h3>Gol anları</h3><p>Uzak mesafe füzeleri, rövaşatalar, son saniye golleri.</p></div>
+        <div class="cat"><span class="t">🧤 KURTARIŞ</span><h3>Kaleci şovları</h3><p>İmkânsız denen kurtarışlar ve penaltı düelloları.</p></div>
+        <div class="cat"><span class="t">🌀 TEKNİK</span><h3>Çalım &amp; hareket</h3><p>Rakibi yere oturtan çalımlar, akıl almaz paslar.</p></div>
+        <div class="cat"><span class="t">📣 TRİBÜN</span><h3>Taraftar anları</h3><p>Tribünden, kulübeden ve saha kenarından viral anlar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="blog" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Maç sonu yorumları</div><h2>Blog</h2></div>
+        <span class="label">Örnek yazılar · kendi yazılarınla değiştir</span>
+      </div>
+      <div class="posts">
+        <a class="post" href="#blog"><time>Ekim 2026</time><div><h3>Bir video nasıl viral olur?</h3><p>Kanalda en çok izlenen anların ortak noktaları ve seçerken dikkat ettiğim şeyler.</p></div><span class="tag">Kanal notları</span></a>
+        <a class="post" href="#blog"><time>Eylül 2026</time><div><h3>100 bin abone: teşekkürler</h3><p>Kanalın hikâyesi, ilk videodan bugüne değişenler ve sırada ne var.</p></div><span class="tag">Kilometre taşı</span></a>
+        <a class="post" href="#blog"><time>Ağustos 2026</time><div><h3>Sezonun en iyi 5 son dakika golü</h3><p>Yeni sezonun ilk haftalarında herkesi ayağa kaldıran goller.</p></div><span class="tag">Liste</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="iletisim" style="padding-top:0">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <div class="label">Transfer görüşmesi</div>
+          <h2>İletişim</h2>
+          <p>Sponsorluk, iş birliği ve basın talepleri için e-posta gönderebilirsin.</p>
+          <div class="mail" style="margin-top:18px">
+            <code id="email">ibrahimkirtayreklam@gmail.com</code>
+            <button class="copy" id="copyBtn" type="button">Kopyala</button>
+          </div>
+        </div>
+        <div class="socials" aria-label="Sosyal medya">
+          <a href="https://www.youtube.com/@SaniyeFutbol" target="_blank" rel="noopener">YouTube <span>@SaniyeFutbol</span></a>
+          <a href="https://www.instagram.com/saniyefutbolll/" target="_blank" rel="noopener">Instagram <span>@saniyefutbolll</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="official"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3Z"/></svg>Saniye Futbol YouTube kanalının resmi web sitesidir.</span>
+    <span>© <span id="yr">2026</span> Saniye Futbol</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+const btn=document.getElementById('copyBtn'),em=document.getElementById('email');
+btn.addEventListener('click',()=>{
+  const done=()=>{btn.textContent='Kopyalandı';setTimeout(()=>btn.textContent='Kopyala',1600)};
+  try{navigator.clipboard.writeText(em.textContent).then(done,()=>{sel();});}catch(e){sel();}
+  function sel(){const r=document.createRange();r.selectNodeContents(em);const s=getSelection();s.removeAllRanges();s.addRange(r);}
+});
+// Maç saati: 90+1' → 90+5' arası döner
+const m=document.getElementById('min');let k=3;
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  setInterval(()=>{k=k%5+1;m.textContent="90+"+k+"'";},2500);
+}
+</script>
+</body>
+</html>
